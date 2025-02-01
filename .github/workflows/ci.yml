@@ -1,31 +1,36 @@
-
-name: SonarQube Scan
+name: SonarCloud Scan
 
 on:
-  push:
-    branches:
-      - main  # or any branch you want to scan on push
-  pull_request:
-    branches:
-      - main  # trigger scan on PRs targeting main
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to analyze'
+        required: true
+        default: 'main'
+
 jobs:
   sonarqube:
-    name: SonarQube Scan
-    
+    name: SonarCloud Scan
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set up JDK (if you're using Java, adjust as needed for your tech stack)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'  # or the version you're using
 
-      - name: SonarQube Scan
+      - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          sonar-token: ${{ secrets.SONAR_TOKEN }}  # store your SonarQube token in GitHub Secrets
-          sonar-project-key: Mai EFAT
-          sonar-project-name: jenkins-demo
+          args: |
+            -Dsonar.projectKey=Mai_EFAT          # Project Key
+            -Dsonar.projectName=jenkins-demo     # Project Name
+            -Dsonar.branch.name=${{ github.event.inputs.branch }}  # Branch to analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Set the token in the environment variable
 
 
     # # Step 3: Run Trivy vulnerability scan for Docker image
