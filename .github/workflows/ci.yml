@@ -16,12 +16,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
-      - name: Set up JDK (if you're using Java, adjust as needed for your tech stack)
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'  # or the version you're using
-
+        
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1
         with:
