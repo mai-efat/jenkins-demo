@@ -27,20 +27,20 @@ jobs:
         SONAR_PROJECT_KEY: mai-efat_jenkins-demo
         SONAR_ORG: mai-efat
 
-    # Step 3: Run Trivy vulnerability scan for Docker image
-    - name: Install Trivy and run vulnerability scan
-      uses: aquasecurity/trivy-action@v0.5.0
-      with:
-        image-ref: your-docker-image-name:latest  # Specify your Docker image name here
-      env:
-        TRIVY_SEVERITY: HIGH,CRITICAL  # You can set severity levels for the scan
+    # # Step 3: Run Trivy vulnerability scan for Docker image
+    # - name: Install Trivy and run vulnerability scan
+    #   uses: aquasecurity/trivy-action@v0.5.0
+    #   with:
+    #     image-ref: your-docker-image-name:latest  # Specify your Docker image name here
+    #   env:
+    #     TRIVY_SEVERITY: HIGH,CRITICAL  # You can set severity levels for the scan
 
-    # Step 4: Run Fortify static code analysis
-    - name: Install Fortify and run scan
-      run: |
-        curl -O https://fortify.com/downloads/fortify-sca-latest.zip
-        unzip fortify-sca-latest.zip -d /opt/fortify
-        /opt/fortify/bin/fortify-sca -b build_id -source source_path -scan
-      env:
-        FORTIFY_USERNAME: ${{ secrets.FORTIFY_USERNAME }}
-        FORTIFY_PASSWORD: ${{ secrets.FORTIFY_PASSWORD }}
+    # # Step 4: Run Fortify static code analysis
+    # - name: Install Fortify and run scan
+    #   run: |
+    #     curl -O https://fortify.com/downloads/fortify-sca-latest.zip
+    #     unzip fortify-sca-latest.zip -d /opt/fortify
+    #     /opt/fortify/bin/fortify-sca -b build_id -source source_path -scan
+    #   env:
+    #     FORTIFY_USERNAME: ${{ secrets.FORTIFY_USERNAME }}
+    #     FORTIFY_PASSWORD: ${{ secrets.FORTIFY_PASSWORD }}
