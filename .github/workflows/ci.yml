@@ -1,0 +1,46 @@
+name: Full CI/CD Pipeline with SonarQube, Trivy, and Fortify
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Run SonarQube analysis
+    - name: Run SonarQube analysis
+      uses: sonarsource/sonarcloud-github-action@v1.3
+      with:
+        sonar-token: ${{ secrets.SONAR_TOKEN }}
+      env:
+        SONAR_HOST_URL: https://sonarcloud.io
+        SONAR_PROJECT_KEY: your-project-key
+        SONAR_ORG: your-organization
+
+    # Step 3: Run Trivy vulnerability scan for Docker image
+    - name: Install Trivy and run vulnerability scan
+      uses: aquasecurity/trivy-action@v0.5.0
+      with:
+        image-ref: your-docker-image-name:latest  # Specify your Docker image name here
+      env:
+        TRIVY_SEVERITY: HIGH,CRITICAL  # You can set severity levels for the scan
+
+    # Step 4: Run Fortify static code analysis
+    - name: Install Fortify and run scan
+      run: |
+        curl -O https://fortify.com/downloads/fortify-sca-latest.zip
+        unzip fortify-sca-latest.zip -d /opt/fortify
+        /opt/fortify/bin/fortify-sca -b build_id -source source_path -scan
+      env:
+        FORTIFY_USERNAME: ${{ secrets.FORTIFY_USERNAME }}
+        FORTIFY_PASSWORD: ${{ secrets.FORTIFY_PASSWORD }}
