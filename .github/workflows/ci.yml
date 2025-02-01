@@ -1,5 +1,5 @@
 
-
+ 
 name: SonarCloud Analysis
 
 on:
@@ -21,18 +21,19 @@ jobs:
     - name: Set up SonarCloud
       uses: sonarsource/sonarcloud-github-action@v1
       with:
-        # Add valid inputs here, e.g., projectBaseDir
         projectBaseDir: .
-
-    - name: Run SonarCloud Analysis
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Make sure the SONAR_TOKEN is stored as a GitHub secret
         SONAR_HOST_URL: https://sonarcloud.io
         SONAR_PROJECT_KEY: mai-efat_jenkins-demo
         SONAR_ORG: mai-efat
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # This uses the GitHub secret
+
+    - name: Run SonarCloud Analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Make sure SONAR_TOKEN is set in GitHub secrets
       run: |
-        # Run your SonarCloud analysis command here if necessary
         sonar-scanner
+
 
 
     # # Step 3: Run Trivy vulnerability scan for Docker image
