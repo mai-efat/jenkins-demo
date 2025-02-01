@@ -1,4 +1,5 @@
 
+
 name: SonarCloud Analysis
 
 on:
@@ -13,27 +14,24 @@ jobs:
   sonarcloud:
     runs-on: windows-latest
 
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Install SonarScanner
+      run: |
+        choco install sonar-scanner
+
     - name: Set up SonarCloud
-      uses: sonarsource/sonarcloud-github-action@v1
-      with:
-        projectBaseDir: .
-      env:
-        SONAR_HOST_URL: https://sonarcloud.io
-        SONAR_PROJECT_KEY: mai-efat_jenkins-demo
-        SONAR_ORG: mai-efat
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # This uses the GitHub secret
+      run: |
+        echo "SONAR_HOST_URL=https://sonarcloud.io" >> $env:GITHUB_ENV
+        echo "SONAR_PROJECT_KEY=mai-efat_jenkins-demo" >> $env:GITHUB_ENV
+        echo "SONAR_ORG=mai-efat" >> $env:GITHUB_ENV
+        echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $env:GITHUB_ENV
 
     - name: Run SonarCloud Analysis
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Make sure SONAR_TOKEN is set in GitHub secrets
       run: |
         sonar-scanner
-
 
 
     # # Step 3: Run Trivy vulnerability scan for Docker image
