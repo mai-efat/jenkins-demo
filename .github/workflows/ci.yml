@@ -43,7 +43,7 @@ jobs:
 
     # Optional: Upload Trivy results as an artifact
     - name: Upload Trivy results as an artifact
-      uses: actions/upload-artifact@v3.1.2
+      uses: actions/upload-artifact@v4
       with:
         name: trivy-scan-results
         path: trivy-report.json  # Adjust the path if you save the report in a different location or format
