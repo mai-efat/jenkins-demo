@@ -38,12 +38,15 @@ jobs:
       uses: aquasecurity/trivy-action@0.28.0
       with:
         image-ref: ${{ secrets.DOCKER_USERNAME }}/test:latest 
+        format: 'json'
+        output: scan-reports/trivy-report.json  # Save to a subfolder
       env:
         TRIVY_SEVERITY: HIGH,CRITICAL  # Specify severity levels (e.g., HIGH, CRITICAL)
 
         
     - name: List files in the directory (for debugging)
-      run: ls -alh  # This will show if the trivy-report.json exists
+      run: ls -alh scan-reports/  # This will show if the trivy-report.json exists
+    
         
 
     # Optional: Upload Trivy results as an artifact
