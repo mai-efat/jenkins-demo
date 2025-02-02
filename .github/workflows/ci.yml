@@ -1,41 +1,42 @@
 name: SonarCloud Scan
-
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to analyze'
-        required: true
-        default: 'main'
+ workflow_dispatch:
 
 jobs:
-  sonarqube:
-    name: SonarCloud Scan
-    runs-on: ubuntu-latest
+  sonarcloud:
+    runs-on: ubuntu-latest  # You can use ubuntu-latest or any other environment
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        
-      
-      - name: Set JAVA_HOME to Java 17
-        run: |
-          echo "Setting JAVA_HOME to Java 17"
-          export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.14-7/x64
-          export PATH=$JAVA_HOME/bin:$PATH
-          echo "JAVA_HOME is set to: $JAVA_HOME"
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v1
-        with:
-         args: |
-           -Dsonar.projectKey=Mai_EFAT          # Project Key
-           -Dsonar.projectName=jenkins-demo     # Project Name
-           -Dsonar.branch.name=${{ github.event.inputs.branch }}  # Branch to analyze
-        env:
-         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # Set the token in the environment variable
-         JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.14-7/x64  # Set Java 17 as the environment variable
-         PATH: $JAVA_HOME/bin:$PATH  # Add Java 17 binaries to PATH
+    - name: Set JAVA_HOME to Java 17
+      run: |
+        echo "Setting JAVA_HOME to Java 17"
+        export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.14-7/x64
+        export PATH=$JAVA_HOME/bin:$PATH
+        echo "JAVA_HOME is set to: $JAVA_HOME"
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Set SONAR_TOKEN as secret
+      run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
+
+    - name: Run Maven SonarScanner
+      run: mvn clean verify sonar:sonar \
+        -Dsonar.projectKey=Mai_EFAT \
+        -Dsonar.projectName=jenkins-demo \
+        -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+
     # # Step 3: Run Trivy vulnerability scan for Docker image
     # - name: Install Trivy and run vulnerability scan
     #   uses: aquasecurity/trivy-action@v0.5.0
