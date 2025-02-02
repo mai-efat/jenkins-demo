@@ -1,42 +1,56 @@
-name: SonarCloud Scan
+name: Build and Push Docker Image to Docker Hub
+
 on:
- workflow_dispatch:
+  push:
+    branches:
+      - main  # Trigger this on push to the 'main' branch
+  pull_request:
+    branches:
+      - main  # Trigger on PR to the 'main' branch
 
 jobs:
-  sonarcloud:
-    runs-on: ubuntu-latest  # You can use ubuntu-latest or any other environment
+  build_and_push:
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-    - name: Set JAVA_HOME to Java 17
-      run: |
-        echo "Setting JAVA_HOME to Java 17"
-        export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.14-7/x64
-        export PATH=$JAVA_HOME/bin:$PATH
-        echo "JAVA_HOME is set to: $JAVA_HOME"
+    # Step 2: Set up Docker Buildx
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
+    # Step 3: Log in to Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub username
+        password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub password or Personal Access Token
 
-    - name: Set SONAR_TOKEN as secret
-      run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
+    # Step 4: Build Docker image
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/your-repo-name:latest .  # Replace with your Docker Hub username and repo name
 
-    - name: Run Maven SonarScanner
-      run: mvn clean verify sonar:sonar \
-        -Dsonar.projectKey=Mai_EFAT \
-        -Dsonar.projectName=jenkins-demo \
-        -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
-        -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    # Step 5: Push Docker image to Docker Hub
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/your-repo-name:latest  # Replace with your Docker Hub username and repo name
+  # Run Trivy scan using the Trivy GitHub Action
+    - name: Install Trivy and run vulnerability scan
+      uses: aquasecurity/trivy-action@v0.5.0
+      with:
+        image-ref: your-docker-image-name:latest  # The image you just built
+      env:
+        TRIVY_SEVERITY: HIGH,CRITICAL  # Specify severity levels (e.g., HIGH, CRITICAL)
 
-
+    # Optional: Upload Trivy results as an artifact
+    - name: Upload Trivy results as an artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-scan-results
+        path: trivy-report.json  # Adjust the path if you save the report in a different location or format
     # # Step 3: Run Trivy vulnerability scan for Docker image
     # - name: Install Trivy and run vulnerability scan
     #   uses: aquasecurity/trivy-action@v0.5.0
