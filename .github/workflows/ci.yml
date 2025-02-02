@@ -39,13 +39,13 @@ jobs:
       with:
         image-ref: ${{ secrets.DOCKER_USERNAME }}/test:latest 
         format: 'json'
-        output: scan-reports/trivy-report.json  # Save to a subfolder
+        output: trivy-report.json  # Save to a subfolder
       env:
         TRIVY_SEVERITY: HIGH,CRITICAL  # Specify severity levels (e.g., HIGH, CRITICAL)
 
         
     - name: List files in the directory (for debugging)
-      run: ls -alh scan-reports/  # This will show if the trivy-report.json exists
+      run: ls -alh   # This will show if the trivy-report.json exists
     
         
 
