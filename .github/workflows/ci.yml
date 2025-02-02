@@ -35,7 +35,7 @@ jobs:
         docker push ${{ secrets.DOCKER_USERNAME }}/your-repo-name:latest  # Replace with your Docker Hub username and repo name
   # Run Trivy scan using the Trivy GitHub Action
     - name: Install Trivy and run vulnerability scan
-      uses: aquasecurity/trivy-action@v0.5.0
+      uses: aquasecurity/trivy-action@v0.6.0
       with:
         image-ref: your-docker-image-name:latest  # The image you just built
       env:
@@ -43,7 +43,7 @@ jobs:
 
     # Optional: Upload Trivy results as an artifact
     - name: Upload Trivy results as an artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: trivy-scan-results
         path: trivy-report.json  # Adjust the path if you save the report in a different location or format
