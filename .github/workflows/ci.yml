@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main  # Trigger on PR to the 'main' branch
+  workflow_dispatch:
 
 jobs:
   build_and_push:
