@@ -27,19 +27,19 @@
   </dependencies>
 
   <build>
-    <!-- pluginManagement should be inside the <build> tag -->
+    <!-- pluginManagement section for managing plugin versions -->
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>5.0.0.4389</version>
+          <version>5.0.0.4389</version> <!-- Make sure the version fits your SonarQube version -->
         </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
-      <!-- SonarQube Plugin execution -->
+      <!-- The SonarQube Plugin to execute the analysis -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
@@ -47,11 +47,12 @@
         <executions>
           <execution>
             <goals>
-              <goal>sonar</goal> <!-- Executes the Sonar analysis -->
+              <goal>sonar</goal> <!-- Executes the SonarQube analysis -->
             </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+
 </project>
