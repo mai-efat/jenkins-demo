@@ -56,29 +56,67 @@
 #         name: trivy-scan-results
 #         path: trivy-report.json  # Adjust the path if you save the report in a different location or format
 
-name: Fortify Scan
+# name: Fortify Scan
 
+# on:
+#    workflow_dispatch:
+
+# # jobs:
+#   scan:
+#     runs-on: ubuntu-20.04
+#     container:
+#       image: fortify/fortify-sca:latest  # Use Fortify's official Docker image
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Run Fortify Source Code Scan
+#         run: |
+#           # Run the Fortify scan on your source code
+#           sourceanalyzer -b my-build-id -clean
+#           sourceanalyzer -b my-build-id ./src -f fortify-results.fpr
+
+#       - name: Upload Fortify results as artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: fortify-scan-results
+#           path: fortify-results.fpr  # Path to your Fortify results file
+name: SonarCloud Scan
 on:
-   workflow_dispatch:
+ workflow_dispatch:
 
 jobs:
-  scan:
-    runs-on: ubuntu-20.04
-    container:
-      image: fortify/fortify-sca:latest  # Use Fortify's official Docker image
+  sonarcloud:
+    runs-on: ubuntu-latest  # You can use ubuntu-latest or any other environment
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Run Fortify Source Code Scan
-        run: |
-          # Run the Fortify scan on your source code
-          sourceanalyzer -b my-build-id -clean
-          sourceanalyzer -b my-build-id ./src -f fortify-results.fpr
+    - name: Set JAVA_HOME to Java 17
+      run: |
+        echo "Setting JAVA_HOME to Java 17"
+        export JAVA_HOME=/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.14-7/x64
+        export PATH=$JAVA_HOME/bin:$PATH
+        echo "JAVA_HOME is set to: $JAVA_HOME"
 
-      - name: Upload Fortify results as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: fortify-scan-results
-          path: fortify-results.fpr  # Path to your Fortify results file
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Set SONAR_TOKEN as secret
+      run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
+
+    - name: Run Maven SonarScanner
+      run: mvn clean verify sonar:sonar \
+        -Dsonar.projectKey=Mai_EFAT \
+        -Dsonar.projectName=jenkins-demo \
+        -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
 
