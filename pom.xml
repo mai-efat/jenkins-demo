@@ -77,12 +77,6 @@
         </plugin>
         <!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
         <plugin>
-  <groupId>org.sonarsource.scanner.maven</groupId>
-  <artifactId>sonar-maven-plugin</artifactId>
-  <version>3.9.1.2184</version>
-    </plugin>
-
-        <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.7.1</version>
         </plugin>
@@ -90,6 +84,13 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
         </plugin>
+        <plugin>
+          
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>3.9.1.2184</version>
+        </plugin>
+        
       </plugins>
     </pluginManagement>
   </build>
