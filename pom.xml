@@ -26,18 +26,20 @@
     </dependency>
   </dependencies>
 
-  <pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>5.0.0.4389</version>
-      </plugin>
-    </plugins>
-  </pluginManagement>
-
   <build>
+    <!-- pluginManagement should be inside the <build> tag -->
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>5.0.0.4389</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
+      <!-- SonarQube Plugin execution -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
@@ -45,7 +47,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>sonar</goal>
+              <goal>sonar</goal> <!-- Executes the Sonar analysis -->
             </goals>
           </execution>
         </executions>
