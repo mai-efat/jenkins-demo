@@ -122,5 +122,5 @@ jobs:
        -Dsonar.projectName=jenkins-demo \
        -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
        -Dsonar.host.url=https://sonarcloud.io \
-       -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+       -Dsonar.login=6604b9d314d5fdf014733a94dc30514b3844b0c4
 
