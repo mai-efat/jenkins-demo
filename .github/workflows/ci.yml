@@ -112,7 +112,7 @@ jobs:
       run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
 
     - name: Run Maven SonarScanner
-      run: mvn clean verify sonar:sonar \
+      run: mvn clean verify sonar:sonar -X \
        -Dsonar.projectKey=Mai_EFAT \
        -Dsonar.projectName=jenkins-demo \
        -Dsonar.branch.name=${{ github.head_ref || github.ref_name }} \
