@@ -110,6 +110,11 @@ jobs:
 
     - name: Set SONAR_TOKEN as secret
       run: echo "SONAR_TOKEN=${{ secrets.SONAR_TOKEN }}" >> $GITHUB_ENV
+       Delete the Sonar plugin from local repository and clean install
+    - name: Clean Sonar plugin and rebuild
+      run: |
+        rm -rf ~/.m2/repository/org/sonarsource/scanner/maven/sonar-maven-plugin/
+        mvn clean install
 
     - name: Run Maven SonarScanner
       run: mvn clean verify sonar:sonar -X \
